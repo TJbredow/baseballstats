@@ -2,7 +2,7 @@ import os
 import csv
 from pprint import pprint
 
-years = [2022, 2023]
+years = [2023]
 
 class YearData:
     datapath = os.getenv("ANALYSIS_DATA_PATH",".")
@@ -27,6 +27,7 @@ class YearData:
     def __init__(self, team: str, player: str, year: str):
         """Ingests data from csvs into dictionaries for analysis"""
         self.games = {}
+        self.playergamelogs = {}
         self.team = team
         self.player = player
         self.year = year
@@ -43,14 +44,82 @@ class YearData:
             playergames = csv.DictReader(pfile)
             for game in playergames:
                 # it can be safely assumed that any game a player has been in, is contained within the team's games
+                gtm = game['Gtm'].split(' ')[0] #Getting rid of parenthesis
+                self.playergamelogs[gtm] = game
                 if game['Tm'] == team: # They could have been traded mid season                
-                    gtm = game['Gtm'].split(' ')[0] #Getting rid of parenthesis
                     # Updates the field in the game dictionary based on team Game #
                     self.games[gtm]["PlayerContribution"] = game["Inngs"]
-        appearances = {x["PlayerContribution"] for x in self.games.values()}
-        # self.win_pcts = {
-        #     appearance : win_pct(appearance) 
-        # }
+                
+    def _stats(self, playergamelogs = dict()) -> str:
+        """String representation of average in .xxx format given a dict of games"""
+        if not playergamelogs:
+            playergamelogs = self.playergamelogs
+        pa = sum([int(x['PA']) for x in playergamelogs.values()])
+        ab = sum([int(x['AB']) for x in playergamelogs.values()])
+        h = sum([int(x['H']) for x in playergamelogs.values()])
+        b2 = sum([int(x['2B']) for x in playergamelogs.values()])
+        b3 = sum([int(x['3B']) for x in playergamelogs.values()])
+        hr = sum([int(x['HR']) for x in playergamelogs.values()])
+        xbh = b2 + b3 + hr
+        b1 = h - xbh
+        bb = sum([int(x['BB']) for x in playergamelogs.values()])
+        sf = sum([int(x['SF']) for x in playergamelogs.values()])
+        ibb = sum([int(x['IBB']) for x in playergamelogs.values()])
+        hbp = sum([int(x['HBP']) for x in playergamelogs.values()])
+        so = sum([int(x['SO'] )for x in playergamelogs.values()])
+        avg = round(h / ab, 3)
+        obp = round((h + bb + hbp)/(ab + bb + hbp + sf),3)
+        slg = round((b1 + (b2*2) + (b3*3) + (hr*4))/ab, 3)
+        ops = round(obp + slg,3)
+        sop = round((so/ab)*100,2)
+        return {
+            "avg" : avg,
+            "obp" : obp,
+            "sopct" : avg,
+            "slg" : slg,
+            "ops" : ops
+        }
+               
+    def whole_team_performance(self, otherplayer: str, exclude_month = "AAAAAAAAAAAAAAH") -> dict:
+        """Compares some other player's performance when the primary player is/is not playing"""
+        performance_with_player = {}
+        performance_without_player = {}
+        with open(self.filename_player(otherplayer, self.year)) as opfile:
+            opgames = csv.DictReader(opfile)
+            for gamelog in opgames:
+                if not exclude_month in gamelog["Date"]:
+                    gtm = gamelog['Gtm'].split(' ')[0] #Getting rid of parenthesis
+                    if self.games[gtm]['PlayerContribution'] != "DNP": # They could have been traded mid season                
+                        performance_with_player[gtm] = gamelog
+                    else:
+                        performance_without_player[gtm] = gamelog
+
+        return {
+            "withPlayer" : self._stats(performance_with_player),
+            "withoutPlayer" : self._stats(performance_without_player)
+        }
+    
+    def other_players_performance(self, otherplayer: str) -> dict:
+        """Compares some other player's performance when the primary player is/is not playing"""
+        performance_with_player = {}
+        performance_without_player = {}
+        with open(self.filename_player(otherplayer, self.year)) as opfile:
+            opgames = csv.DictReader(opfile)
+            for gamelog in opgames:
+                gtm = gamelog['Gtm'].split(' ')[0] #Getting rid of parenthesis
+                if self.games[gtm]['PlayerContribution'] != "DNP": # They could have been traded mid season                
+                    performance_with_player[gtm] = gamelog
+                elif gamelog['Tm'] == self.team:
+                    performance_without_player[gtm] = gamelog
+                else:
+                    print(gamelog["Tm"])
+
+        return {
+            "withPlayer" : self._stats(performance_with_player),
+            "withoutPlayer" : self._stats(performance_without_player)
+        }
+        
+        
         
 
     def simple_analysis(self) -> dict:
@@ -84,4 +153,43 @@ class YearData:
 
 for year in years:
     yd = YearData("ATL","MichaelHarris", year)
-    print(yd)
+    stats = yd.other_players_performance("RonaldAcuna")
+    print("Ronald Acuna playing with or without MH2")
+    for n, stat in stats.items():
+        print(f"{year} {n}")
+        prstr = ""
+        for k,v in stat.items():
+            prstr += f"{k} {v} | "
+        print(prstr)
+    stats = yd.other_players_performance("MattOlson")
+    print("Matt Olson playing with or without MH2")
+    for n, stat in stats.items():
+        print(f"{year} {n}")
+        prstr = ""
+        for k,v in stat.items():
+            prstr += f"{k} {v} | "
+        print(prstr)
+    stats = yd.other_players_performance("AustinRiley")
+    print("AustinRiley playing with or without MH2")
+    for n, stat in stats.items():
+        print(f"{year} {n}")
+        prstr = ""
+        for k,v in stat.items():
+            prstr += f"{k} {v} | "
+        print(prstr)
+    stats = yd.whole_team_performance("WholeTeam")
+    print("Whole Team playing with or without MH2")
+    for n, stat in stats.items():
+        print(f"{year} {n}")
+        prstr = ""
+        for k,v in stat.items():
+            prstr += f"{k} {v} | "
+        print(prstr)
+    stats = yd.whole_team_performance("WholeTeam", "Jun")
+    print("Whole Team playing with or without MH2 Excluding June")
+    for n, stat in stats.items():
+        print(f"{year} {n}")
+        prstr = ""
+        for k,v in stat.items():
+            prstr += f"{k} {v} | "
+        print(prstr)

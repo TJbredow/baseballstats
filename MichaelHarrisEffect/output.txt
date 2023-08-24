@@ -1,0 +1,66 @@
+Year: 2022
+Player: MichaelHarris
+Team:ATL
+Games Played: 114
+Winpct GP: 69.3
+Team Runs/Game GP: 5.16
+Team Runs Against/Game GP: 3.44
+Games Not Played: 48
+Winpct DNP: 45.83
+Team Runs/Game DNP: 4.19
+Team Runs Against/Game DNP: 4.52
+Year: 2023
+Player: MichaelHarris
+Team:ATL
+Games Played: 103
+Winpct GP: 67.96
+Team Runs/Game GP: 6.02
+Team Runs Against/Game GP: 4.04
+Games Not Played: 23
+Winpct DNP: 52.17
+Team Runs/Game DNP: 4.74
+Team Runs Against/Game DNP: 4.3
+Year: 2022
+Player: MichaelHarris
+Team:ATL
+Games Played: 114
+Winpct GP: 69.3
+Team Runs/Game GP: 5.16
+Team Runs Against/Game GP: 3.44
+Games Not Played: 48
+Winpct DNP: 45.83
+Team Runs/Game DNP: 4.19
+Team Runs Against/Game DNP: 4.52
+Year: 2022
+Player: MichaelHarris
+Team:ATL
+Games Played: 114
+Winpct GP: 69.3
+Team Runs/Game GP: 5.16
+Team Runs Against/Game GP: 3.44
+Games Not Played: 48
+Winpct DNP: 45.83
+Team Runs/Game DNP: 4.19
+Team Runs Against/Game DNP: 4.52
+Year: 2022
+Player: MichaelHarris
+Team:ATL
+Games Played: 114
+Winpct GP: 69.3
+Team Runs/Game GP: 5.16
+Team Runs Against/Game GP: 3.44
+Games Not Played: 48
+Winpct DNP: 45.83
+Team Runs/Game DNP: 4.19
+Team Runs Against/Game DNP: 4.52
+Year: 2023
+Player: MichaelHarris
+Team:ATL
+Games Played: 103
+Winpct GP: 67.96
+Team Runs/Game GP: 6.02
+Team Runs Against/Game GP: 4.04
+Games Not Played: 23
+Winpct DNP: 52.17
+Team Runs/Game DNP: 4.74
+Team Runs Against/Game DNP: 4.3
